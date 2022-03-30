@@ -1,0 +1,17 @@
+/snap/clion/184/bin/cmake/linux/bin/cmake -G "Unix Makefiles" /home/melbeer/Documents/Epita/Image/Isim/ISIM_Deep_Shadow_Maps
+-- No build type selected, default to Release
+-- Shared libraries enabled
+-- Looking for ZLIB...
+-- Checking for module 'zzip-zlib-config'
+--   No package 'zzip-zlib-config' found
+-- Found ZLIB: optimized;/usr/lib/x86_64-linux-gnu/libz.so;debug;/usr/lib/x86_64-linux-gnu/libz.so
+-- Checking for module 'minizip'
+--   No package 'minizip' found
+-- Enabled importer formats: AMF 3DS AC ASE ASSBIN B3D BVH COLLADA DXF CSM HMP IRRMESH IQM IRR LWO LWS M3D MD2 MD3 MD5 MDC MDL NFF NDO OFF OBJ OGRE OPENGEX PLY MS3D COB BLEND IFC XGL FBX Q3D Q3BSP RAW SIB SMD STL TERRAGEN 3D X X3D GLTF 3MF MMD
+-- Disabled importer formats:
+-- Enabled exporter formats: OBJ OPENGEX PLY 3DS ASSBIN ASSXML M3D COLLADA FBX STL X X3D GLTF 3MF PBRT ASSJSON STEP
+-- Disabled exporter formats:
+Building Assimp Viewer only supported on Windows.
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/melbeer/Documents/Epita/Image/Isim/ISIM_Deep_Shadow_Maps
