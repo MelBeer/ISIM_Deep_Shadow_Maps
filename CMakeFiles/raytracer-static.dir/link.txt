@@ -1,1 +1,0 @@
-/usr/bin/c++  -pedantic -O3 -DNDEBUG  CMakeFiles/raytracer-static.dir/src/main.cc.o CMakeFiles/raytracer-static.dir/src/Renderer.cpp.o CMakeFiles/raytracer-static.dir/src/geometry.cpp.o CMakeFiles/raytracer-static.dir/src/Image.cpp.o -o raytracer-static  -static 
