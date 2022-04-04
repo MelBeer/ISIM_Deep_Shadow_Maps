@@ -59,7 +59,8 @@ test/Makefile
 test/headercheck/Makefile
 tools/assimp_cmd/Makefile
 
-## Assimp gitignore
+## --------------------------- ASSIMP GITIGNORE ----------------------------------------
+
 .idea
 build
 .project
@@ -101,6 +102,7 @@ include/assimp/config.h
 unit.vcxproj.user
 
 # CMake
+.cmake/
 CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
