@@ -8,10 +8,10 @@
 #define DEFAULT_KD 0.5
 #define DEFAULT_KS 0.2
 
-Image Renderer::renderScene(int imgWidth) {
-    int imgHeight = imgWidth / ratio;
+Image Renderer::renderScene(int imgWidth, int imgHeight) {
     camera.SetPixelSize(imgHeight, imgWidth);
     pixelSize = camera.planeWidth / imgWidth;
+    std::cout << "planeWidth : " << camera.planeWidth << '\n';
     aiVector3t<float> actPixel = camera.originPixel + camera.right * (pixelSize/2) - camera.up * (pixelSize/2);
 
     std::cout << "forward : " << camera.forward << '\n';
@@ -24,18 +24,21 @@ Image Renderer::renderScene(int imgWidth) {
         for (int w = 0; w < imgWidth; ++w) {
             aiVector3t<float> ray = (actPixel - camera.center).Normalize();
             //std::cout << "point : " << h << ", " << w << '\n';
-            //std::cout << "ray : " << ray << '\n';
+            if ((h == 0 && w == 0) || (h == imgHeight-1 && w == imgWidth-1))
+                std::cout << "ray : " << ray << '\n';
 
-            aiMesh mesh;
-            aiFace face;
-            aiVector3t<float> intersectionPt = findClosestIntersectPt(camera.forward, face, mesh,
+            int m = 0;
+            int f = 0;
+            aiVector3t<float> intersectionPt = findClosestIntersectPt(ray, f, m,
                                            camera.center);
+
+            aiMesh *mesh = scene->mMeshes[m];
+            aiFace face = mesh->mFaces[f];
 
             float dist = (intersectionPt - camera.center).Length();
 
             if (dist > camera.nearClipPlane)
             {
-                std::cout << "\t intersects\n";
                 // TODO : iterate over every lights;
                 auto light = scene->mLights[0];
 
@@ -60,13 +63,13 @@ Image Renderer::renderScene(int imgWidth) {
 }
 
 void Renderer::setCamera() {
-    this->camera = Camera(aiVector3t<float>(7, 7, 5), aiVector3t<float>(0, 0, 1), aiVector3t<float>(-4, -4, 7), 80, 45,
-            0.1, 500);
+    this->camera = Camera(aiVector3t<float>(7, 7, 5), aiVector3t<float>(0, 0, 1), aiVector3t<float>(-4, -4, 7), 80, 80,
+            1, 500);
     camera.SetPixelSize(1600, 900);
 }
 
 aiVector3t<float>
-Renderer::findClosestIntersectPt(aiVector3t<float> ray, aiFace &face, aiMesh &mesh, aiVector3t<float> nullvalue) {
+Renderer::findClosestIntersectPt(aiVector3t<float> ray, int &face, int &mesh, aiVector3t<float> nullvalue) {
     float faceDist = camera.farClipPlane;
     aiVector3t<float> intersectionPt = nullvalue;
     for (int m = 0; m < scene->mNumMeshes; ++m) {
@@ -84,12 +87,14 @@ Renderer::findClosestIntersectPt(aiVector3t<float> ray, aiFace &face, aiMesh &me
                 nb_intersects++;
                 faceDist = dist;
                 intersectionPt = intPt;
-                face = actFace;
-                mesh = *actMesh;
+                face = f;
+                mesh = m;
+                /*if (f != 0 && f != 44 && f != 70 && f!= 71)
+                    std::cout << "f : " << f << std::endl;*/
             }
         }
-        if (nb_intersects > 0)
-            std::cout << "nb_intersects : " << nb_intersects << '\n';
+        /*if (nb_intersects > 0)
+            std::cout << "nb_intersects : " << nb_intersects << " | on " << actMesh->mNumFaces << " faces" << '\n';*/
     }
 
     return intersectionPt;

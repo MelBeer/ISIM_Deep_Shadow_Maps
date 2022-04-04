@@ -13,6 +13,7 @@ Camera::Camera(aiVector3t<float> center, aiVector3t<float> lookAt, aiVector3t<fl
     this->fovAlpha = fovAlpha;
     this->fovBeta = fovBeta;
     this->nearClipPlane = nearClipPlane;
+    this->farClipPlane = farClipPlane;
 
     forward = (lookAt - center).Normalize();
 

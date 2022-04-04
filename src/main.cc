@@ -41,7 +41,7 @@ int main() {
 
     // Computation start
     Renderer renderer = Renderer{scene};
-    Image img = renderer.renderScene(400);
+    Image img = renderer.renderScene(400, 400);
     img.saveImage("test/monkey.ppm");
 
     return 0;
