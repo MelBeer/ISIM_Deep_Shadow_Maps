@@ -5,14 +5,10 @@
 #ifndef RAYTRACER_IMAGE_H
 #define RAYTRACER_IMAGE_H
 
-#include <assimp/Importer.hpp>      // C++ importer interface
-#include <assimp/scene.h>           // Output data structure
-#include <assimp/postprocess.h>
-
 #include <bitset>
 #include <fstream>
 #include <iostream>
-using namespace std;
+#include "geometry.h"
 
 class Image {
 public:

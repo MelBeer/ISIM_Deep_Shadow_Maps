@@ -7,7 +7,7 @@
 void Image::saveImage(const std::string& fileName)
 {
     // Create file
-    ofstream file(fileName);
+    std::ofstream file(fileName);
 
     // Init file with basic information
     file << "P6\n" << this->w << " " << this->h << " " << 255 << "\n";

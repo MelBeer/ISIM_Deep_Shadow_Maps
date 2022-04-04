@@ -28,7 +28,8 @@ class Camera {
 
      };
 
-     Camera(Point3 center, Point3 lookAt, Vector3 up, float fovAlpha, float fovBeta, float nearClipPlane); 
+     Camera(aiVector3t<float> center, aiVector3t<float> lookAt, aiVector3t<float> up, float fovAlpha, float fovBeta,
+            float nearClipPlane, float farClipPlane);
 
      void SetPixelSize(int height, int width); 
 

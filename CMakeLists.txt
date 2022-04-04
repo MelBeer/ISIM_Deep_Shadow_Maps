@@ -4,10 +4,8 @@ set(SRC
         "src/Renderer.cpp"
         "src/geometry.cpp"
         "src/Image.cpp"
-)
-
-# Directories containing headers must be specified in the include_directories()
-include_directories(
+        "src/printer.cpp"
+        "src/Camera.cpp"
     "src/"
 )
 
