@@ -26,7 +26,7 @@ public:
 
 private:
     aiVector3t<float>
-    findClosestIntersectPt(aiVector3t<float> ray, aiFace &face, aiMesh &mesh, aiVector3t<float> nullvalue);
+            findClosestIntersectPt(aiVector3t<float> ray, aiFace &face, aiMesh &mesh, aiVector3t<float> nullvalue);
 };
 
 
