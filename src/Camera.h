@@ -29,7 +29,7 @@ public :
 
     };
 
-    Camera(aiVector3t<double> center, aiVector3t<double> lookAt, aiVector3t<double> up, double fovAlpha, double fovBeta,
+    Camera(aiVector3t<double> center, aiVector3t<double> lookAt, double fovAlpha, double aspectRatio,
            double nearClipPlane, double farClipPlane);
 
     void SetPixelSize(int height, int width);
