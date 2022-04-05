@@ -5,7 +5,7 @@
 #ifndef RAYTRACER_IMAGE_H
 #define RAYTRACER_IMAGE_H
 
-#include <bitset>
+#include <vector>
 #include <fstream>
 #include <iostream>
 #include "geometry.h"
