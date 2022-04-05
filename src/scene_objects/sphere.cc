@@ -6,18 +6,18 @@
 
 std::shared_ptr<Point3> Sphere::RayIntersect(Point3 origin, Vector3 ray)
 {
-    float b = ray.dotProduct(origin - this->center) * 2;
-    float a = ray.dotProduct(ray); // pow(ray.norm(), 2);
-    float c = pow((origin - this->center).norm(), 2) - pow(this->radius, 2);
+    double b = ray.dotProduct(origin - this->center) * 2;
+    double a = ray.dotProduct(ray); // pow(ray.norm(), 2);
+    double c = pow((origin - this->center).norm(), 2) - pow(this->radius, 2);
 
-    float delta = pow(b, 2) - 4 * a * c;
+    double delta = pow(b, 2) - 4 * a * c;
 
     if (delta < -0.000001f)
     {
         return nullptr;
     }
 
-    float dist = 0.0f;
+    double dist = 0.0f;
 
     // One intersection
     if (std::abs(delta) < 0.0001f)
@@ -28,8 +28,8 @@ std::shared_ptr<Point3> Sphere::RayIntersect(Point3 origin, Vector3 ray)
     // Two intersections
     else
     {
-        float dist1 = (-b - std::sqrt(delta)) / (2 * a);
-        float dist2 = (-b + std::sqrt(delta)) / (2 * a);
+        double dist1 = (-b - std::sqrt(delta)) / (2 * a);
+        double dist2 = (-b + std::sqrt(delta)) / (2 * a);
         dist = dist1 > dist2 ? dist2 : dist1;
         // std::cout << "Two intersect\n";
     }

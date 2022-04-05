@@ -12,26 +12,26 @@ Vector3 Triangle::GetNormal(Point3 point)
 
 std::shared_ptr<Point3> Triangle::RayIntersect(Point3 origin, Vector3 ray)
 {
-    float kEpsilon = 0.0001f;
+    double kEpsilon = 0.0001f;
        // compute plane's normal
     Vector3 ab = b - a; 
     Vector3 ac = c - a; 
     // no need to normalize
     Vector3 N = ab.cross(ac); // N 
-    float area2 = N.magnitude(); 
+    double area2 = N.magnitude(); 
  
     // Step 1: finding P
  
     // check if ray and plane are parallel ?
-    float NdotRayDirection = N.dotProduct(ray); 
+    double NdotRayDirection = N.dotProduct(ray); 
     if (fabs(NdotRayDirection) < kEpsilon) // almost 0 
         return nullptr; // they are parallel so they don't intersect ! 
  
     // compute d parameter using equation 2
-    float d = -N.dotProduct(a.pointToVector()); 
+    double d = -N.dotProduct(a.pointToVector()); 
  
     // compute t (equation 3)
-    float t = -(N.dotProduct(origin.pointToVector()) + d) / NdotRayDirection; 
+    double t = -(N.dotProduct(origin.pointToVector()) + d) / NdotRayDirection; 
  
     // check if the triangle is in behind the ray
     if (t < 0) return nullptr; // the triangle is behind 

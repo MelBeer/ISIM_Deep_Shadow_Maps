@@ -2,8 +2,8 @@
 
 #include <cmath>
 
-Camera::Camera(aiVector3t<float> center, aiVector3t<float> lookAt, aiVector3t<float> up, float fovAlpha, float fovBeta,
-               float nearClipPlane, float farClipPlane)
+Camera::Camera(aiVector3t<double> center, aiVector3t<double> lookAt, aiVector3t<double> up, double fovAlpha, double fovBeta,
+               double nearClipPlane, double farClipPlane)
 {
     this->center = center;
     this->lookAt = lookAt;

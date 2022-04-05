@@ -9,61 +9,59 @@
 
 // TODO : Fix computation.
 //  Right now : doesn't compute the exact point, works only for triangles, and isn't optimal anyway
-aiVector3t<float> planeIntersect(aiFace *face, aiMesh *mesh, aiVector3t<float> *origin, aiVector3t<float> *ray,
-                                 aiVector3t<float> nullvalue) {
-    if (face->mNumIndices > 3)
+aiVector3t<double> planeIntersect(const aiFace &face, const aiMesh &mesh, const aiVector3t<double> &origin, const aiVector3t<double> &ray,
+                                 const aiVector3t<double> &nullvalue) {
+    if (face.mNumIndices > 3)
+    {
+        std::cout << "I'm not a triangle !\n";
+        return nullvalue;
+    }
+
+    double kEpsilon = 0.0000001f;
+    aiVector3t<double> v0 = mesh.mVertices[face.mIndices[0]];
+    aiVector3t<double> v1 = mesh.mVertices[face.mIndices[1]];
+    aiVector3t<double> v2 = mesh.mVertices[face.mIndices[2]];
+
+    aiVector3t<double> a = v1 - v0;
+    aiVector3t<double> b = v2 - v1;
+    aiVector3t<double> c = v0 - v2;
+
+    // compute the face's normal vector
+    aiVector3t<double> n = a ^ b;
+
+    // if the normal and the ray direction have the same sign, then the triangle
+    // is facing the wrong way
+    if (ray * n >= 0)
         return nullvalue;
 
-    float kEpsilon = 0.0001f;
-    aiVector3t<float> a = mesh->mVertices[face->mIndices[0]];
-    aiVector3t<float> b = mesh->mVertices[face->mIndices[1]];
-    aiVector3t<float> c = mesh->mVertices[face->mIndices[2]];
-    // compute plane's normal
-    aiVector3t<float> ab = b - a;
-    aiVector3t<float> ac = c - a;
-    // no need to normalize
-    aiVector3t<float> N = ab ^ ac; // N
-    float area2 = N.Length();
+    // compute the distance from the plane to (0, 0, 0)
+    // (aka the fourth plane equation component)
+    double D = -(n * v0);
+    double t
+            = -(n * origin + D) / (n * ray);
+    if (t < 0)
+        return nullvalue;
 
-    // Step 1: finding P
+    // P = O + t * dir
+    aiVector3t<double> P_off = ray * t;
+    aiVector3t<double> P = origin + P_off;
 
-    // check if ray and plane are parallel ?
-    float NdotRayDirection = N * *ray;
-    if (std::fabs(NdotRayDirection) < kEpsilon) // almost 0
-        return nullvalue; // they are parallel so they don't intersect !
+    // check on which side of a, b, and c P is
 
-    // compute d parameter using equation 2
-    float d = -N * a;
+    aiVector3t<double> v0_to_p = P - v0;
+    aiVector3t<double> v0_cross = a ^ v0_to_p;
+    if (v0_cross * n < -kEpsilon)
+        return nullvalue;
 
-    // compute t (equation 3)
-    float t = -(N * *origin + d) / NdotRayDirection;
+    aiVector3t<double> v1_to_p = P - v1;
+    aiVector3t<double> v1_cross = b ^ v1_to_p;
+    if (v1_cross * n < -kEpsilon)
+        return nullvalue;
 
-    // check if the triangle is in behind the ray
-    if (t < 0) return nullvalue; // the triangle is behind
+    aiVector3t<double> v2_to_p = P - v2;
+    aiVector3t<double> v2_cross = c ^ v2_to_p;
+    if (v2_cross * n < -kEpsilon)
+        return nullvalue;
 
-    // compute the intersection point using equation 1
-    aiVector3t<float> P = *origin + t * *ray;
-
-    // Step 2: inside-outside test
-    aiVector3t<float> C; // vector perpendicular to triangle's plane 
-
-    // edge 0
-    aiVector3t<float> edge0 = b - a;
-    aiVector3t<float> vp0 = P - a;
-    C = edge0 ^ vp0;
-    if (N * C < 0) return nullvalue; // P is on the right side
-
-    // edge 1
-    aiVector3t<float> edge1 = c - b;
-    aiVector3t<float> vp1 = P - b;
-    C = edge1 ^ vp1;
-    if (N * C < 0) return nullvalue; // P is on the right side
-
-    // edge 2
-    aiVector3t<float> edge2 = a - c;
-    aiVector3t<float> vp2 = P - c;
-    C = edge2 ^ vp2;
-    if (N * C < 0) return nullvalue; // P is on the right side;
-
-    return b;
+    return P;
 }

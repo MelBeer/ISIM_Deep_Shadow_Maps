@@ -9,32 +9,32 @@
 
 class Camera {
 public :
-    aiVector3t<float> imagePlanPosition;
-    aiVector3t<float> originPixel;
-    float planeWidth;
-    float planeHeight;
-    float pixelHeight = 0;
-    float pixelWidth = 0;
-    aiVector3t<float> center;
-    aiVector3t<float> lookAt;
-    aiVector3t<float> up;
-    aiVector3t<float> forward;
-    aiVector3t<float> right;
-    float fovAlpha;
-    float fovBeta;
-    float nearClipPlane;
-    float farClipPlane;
+    aiVector3t<double> imagePlanPosition;
+    aiVector3t<double> originPixel;
+    double planeWidth;
+    double planeHeight;
+    double pixelHeight = 0;
+    double pixelWidth = 0;
+    aiVector3t<double> center;
+    aiVector3t<double> lookAt;
+    aiVector3t<double> up;
+    aiVector3t<double> forward;
+    aiVector3t<double> right;
+    double fovAlpha;
+    double fovBeta;
+    double nearClipPlane;
+    double farClipPlane;
 
     Camera() {
 
     };
 
-    Camera(aiVector3t<float> center, aiVector3t<float> lookAt, aiVector3t<float> up, float fovAlpha, float fovBeta,
-           float nearClipPlane, float farClipPlane);
+    Camera(aiVector3t<double> center, aiVector3t<double> lookAt, aiVector3t<double> up, double fovAlpha, double fovBeta,
+           double nearClipPlane, double farClipPlane);
 
     void SetPixelSize(int height, int width);
 
-    aiVector3t<float> GetPixelPos(int posH, int posW);
+    aiVector3t<double> GetPixelPos(int posH, int posW);
 
 };
 

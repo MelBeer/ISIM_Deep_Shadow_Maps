@@ -10,7 +10,7 @@
 #include <assimp/postprocess.h>
 #include "printer.h"
 
-aiVector3t<float> planeIntersect(aiFace *face, aiMesh *mesh, aiVector3t<float> *origin, aiVector3t<float> *ray,
-                                 aiVector3t<float> nullvalue);
+aiVector3t<double> planeIntersect(const aiFace &face, const aiMesh &mesh, const aiVector3t<double> &origin, const aiVector3t<double> &ray,
+                                 const aiVector3t<double> &nullvalue);
 
 #endif //RAYTRACER_GEOMETRY_H

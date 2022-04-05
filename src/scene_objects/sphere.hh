@@ -8,17 +8,17 @@
 class Sphere : public Model
 {
 public:
-    float radius;
+    double radius;
     Point3 center;
 
-    Sphere(Point3 center, float radius)
+    Sphere(Point3 center, double radius)
     {
         this->center = center;
         this->radius = radius;
         this->texture = std::make_shared<UniformTexture>();
     }
 
-    Sphere(Point3 center, float radius, std::shared_ptr<TextureMaterial> texture)
+    Sphere(Point3 center, double radius, std::shared_ptr<TextureMaterial> texture)
     {
         this->center = center;
         this->radius = radius;

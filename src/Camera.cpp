@@ -4,8 +4,8 @@
 
 #include "Camera.h"
 
-Camera::Camera(aiVector3t<float> center, aiVector3t<float> lookAt, aiVector3t<float> up, float fovAlpha, float fovBeta,
-               float nearClipPlane, float farClipPlane)
+Camera::Camera(aiVector3t<double> center, aiVector3t<double> lookAt, aiVector3t<double> up, double fovAlpha, double fovBeta,
+               double nearClipPlane, double farClipPlane)
 {
     this->center = center;
     this->lookAt = lookAt;
@@ -13,11 +13,12 @@ Camera::Camera(aiVector3t<float> center, aiVector3t<float> lookAt, aiVector3t<fl
     this->fovAlpha = fovAlpha;
     this->fovBeta = fovBeta;
     this->nearClipPlane = nearClipPlane;
+    this->farClipPlane = farClipPlane;
 
     forward = (lookAt - center).Normalize();
 
     // Position plan image
-    aiVector3t<float> positionPlan = (center + forward) * nearClipPlane;
+    aiVector3t<double> positionPlan = center + forward * nearClipPlane;
 
     // Compute size of imagePlan
     planeWidth =
@@ -26,17 +27,17 @@ Camera::Camera(aiVector3t<float> center, aiVector3t<float> lookAt, aiVector3t<fl
             nearClipPlane * tan((fovBeta / 2.0f) * M_PI / 180.0f) * 2;
 
     // Cross product
-    aiVector3t<float> left = forward ^ this->up;
+    aiVector3t<double> left = forward ^ this->up;
     right = -left;
 
     originPixel = positionPlan + left * (planeWidth / 2) + up * (planeHeight / 2);
 }
 
-aiVector3t<float> Camera::GetPixelPos(int posH, int posW)
+aiVector3t<double> Camera::GetPixelPos(int posH, int posW)
 {
-    aiVector3t<float> pixelPosition = originPixel
-                           + -up * pixelHeight * (float)posH
-                           + right * pixelWidth * (float)posW;
+    aiVector3t<double> pixelPosition = originPixel
+                           + -up * pixelHeight * (double)posH
+                           + right * pixelWidth * (double)posW;
     //std::cout << (posH + pixelHeight / 2) << '|'<< (posW + pixelWidth / 2) << " Pixel height " << pixelHeight << " Pixel w " << pixelWidth << '\n';
     return pixelPosition;
 }

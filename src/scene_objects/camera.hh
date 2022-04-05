@@ -9,10 +9,10 @@ class Camera {
     private : 
         Point3 imagePlanPosition; 
         Point3 originPixel; 
-        float planeWidth; 
-        float planeHeight; 
-        float pixelHeight = 0;
-        float pixelWidth = 0;  
+        double planeWidth; 
+        double planeHeight; 
+        double pixelHeight = 0;
+        double pixelWidth = 0;  
 
     public : 
      Point3 center; 
@@ -20,16 +20,16 @@ class Camera {
      Vector3 up; 
      Vector3 forward; 
      Vector3 right; 
-     float fovAlpha;
-     float fovBeta; 
-     float nearClipPlane; 
+     double fovAlpha;
+     double fovBeta; 
+     double nearClipPlane; 
 
      Camera() {
 
      };
 
-     Camera(aiVector3t<float> center, aiVector3t<float> lookAt, aiVector3t<float> up, float fovAlpha, float fovBeta,
-            float nearClipPlane, float farClipPlane);
+     Camera(aiVector3t<double> center, aiVector3t<double> lookAt, aiVector3t<double> up, double fovAlpha, double fovBeta,
+            double nearClipPlane, double farClipPlane);
 
      void SetPixelSize(int height, int width); 
 
