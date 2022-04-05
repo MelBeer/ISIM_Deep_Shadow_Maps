@@ -11,10 +11,7 @@
 Image Renderer::renderScene(int imgWidth, int imgHeight) {
     camera.SetPixelSize(imgHeight, imgWidth);
     pixelSize = camera.planeWidth / imgWidth;
-    std::cout << "planeWidth : " << camera.planeWidth << '\n';
     aiVector3t<double> actPixel = camera.originPixel + camera.right * (pixelSize/2) - camera.up * (pixelSize/2);
-
-    std::cout << "origin : " << actPixel << '\n';
 
     std::vector<aiColor3D> pixValues = std::vector<aiColor3D>();
     pixValues.reserve(sizeof(aiColor3D) * imgHeight * imgWidth);
@@ -23,9 +20,6 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
     for (int h = 0; h < imgHeight; ++h) {
         for (int w = 0; w < imgWidth; ++w) {
             aiVector3t<double> ray = (actPixel - camera.center).Normalize();
-            //std::cout << "point : " << h << ", " << w << '\n';
-            if ((h == 0 && w == 0) || (h == imgHeight-1 && w == imgWidth-1))
-                std::cout << "ray : " << ray << '\n';
 
             int m = 0;
             int f = 0;
@@ -56,13 +50,8 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
 
             actPixel += camera.right * pixelSize;
         }
-        if (h == 0)
-            std::cout << "endofline : " << actPixel << '\n';
-        else if (h == imgHeight - 1)
-            std::cout << "endofmatrix : " << actPixel << '\n';
+
         actPixel -= camera.right * (pixelSize * imgWidth) + camera.up * pixelSize;
-        if (h == imgHeight - 2)
-            std::cout << "endofcolumn : " << actPixel << '\n';
     }
 
     return { imgHeight, imgWidth, pixValues };
@@ -95,13 +84,9 @@ Renderer::findClosestIntersectPt(aiVector3t<double> ray, int &face, int &mesh, a
                 intersectionPt = intPt;
                 face = f;
                 mesh = m;
-                /*if (f != 0 && f != 44 && f != 70 && f!= 71)
-                    std::cout << "f : " << f << std::endl;*/
             }
         }
     }
-    //if (nb_intersects > 0)
-    //std::cout << "nb_intersects : " << nb_intersects << "for ray going to" << ray << '\n';
 
     return intersectionPt;
 }
