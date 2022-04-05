@@ -12,7 +12,7 @@ int main() {
      * You might want to use a Camera and Light classes rather than Assimp's ones.
      */
     const aiScene *scene = importer.ReadFile(
-            "scenes/monkey.obj",
+            "scenes/monkey.dae",
             aiProcess_CalcTangentSpace |
             aiProcess_Triangulate |
             aiProcess_JoinIdenticalVertices |
@@ -41,7 +41,7 @@ int main() {
 
     // Computation start
     Renderer renderer = Renderer{scene};
-    Image img = renderer.renderScene(400, 400);
+    Image img = renderer.renderScene(800, 450);
     img.saveImage("test/monkey.ppm");
 
     return 0;

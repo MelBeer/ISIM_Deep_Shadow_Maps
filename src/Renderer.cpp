@@ -14,7 +14,7 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
     std::cout << "planeWidth : " << camera.planeWidth << '\n';
     aiVector3t<double> actPixel = camera.originPixel + camera.right * (pixelSize/2) - camera.up * (pixelSize/2);
 
-    std::cout << "forward : " << camera.forward << '\n';
+    std::cout << "origin : " << actPixel << '\n';
 
     std::vector<aiColor3D> pixValues = std::vector<aiColor3D>();
     pixValues.reserve(sizeof(aiColor3D) * imgHeight * imgWidth);
@@ -43,7 +43,7 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
                 auto light = scene->mLights[0];
 
                 auto testnormal = mesh->mNormals[face.mIndices[0]];
-                aiColor3D diffuse = aiColor3D(testnormal.x, testnormal.y, testnormal.z) * DEFAULT_COLOR; // aiColor3D(125, 125, 125); // DEFAULT_COLOR * DEFAULT_KD * (mesh.mNormals[face.mIndices[0]] * (light->mPosition - intersectionPt)) * light->mAttenuationConstant; // TODO : check for light intensity
+                aiColor3D diffuse = aiColor3D(testnormal.x, testnormal.y, testnormal.z) * DEFAULT_COLOR; // DEFAULT_COLOR * DEFAULT_KD * (mesh.mNormals[face.mIndices[0]] * (light->mPosition - intersectionPt)) * light->mAttenuationConstant; // TODO : check for light intensity
                 // TODO : define specular
                 // aiColor3D specular =
 
@@ -56,16 +56,21 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
 
             actPixel += camera.right * pixelSize;
         }
-
+        if (h == 0)
+            std::cout << "endofline : " << actPixel << '\n';
+        else if (h == imgHeight - 1)
+            std::cout << "endofmatrix : " << actPixel << '\n';
         actPixel -= camera.right * (pixelSize * imgWidth) + camera.up * pixelSize;
+        if (h == imgHeight - 2)
+            std::cout << "endofcolumn : " << actPixel << '\n';
     }
 
     return { imgHeight, imgWidth, pixValues };
 }
 
 void Renderer::setCamera() {
-    this->camera = Camera(aiVector3t<double>(7, 7, 5), aiVector3t<double>(0, 0, 1), aiVector3t<double>(-4, -4, 7), 80, 80,
-            1, 500);
+    this->camera = Camera(aiVector3t<double>(0, -5, 1), aiVector3t<double>(0, 0, 0), 80, 16.0/9.0,
+                          1, 500);
     camera.SetPixelSize(1600, 900);
 }
 

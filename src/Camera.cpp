@@ -4,14 +4,12 @@
 
 #include "Camera.h"
 
-Camera::Camera(aiVector3t<double> center, aiVector3t<double> lookAt, aiVector3t<double> up, double fovAlpha, double fovBeta,
+Camera::Camera(aiVector3t<double> center, aiVector3t<double> lookAt, double fovAlpha, double aspectRatio,
                double nearClipPlane, double farClipPlane)
 {
     this->center = center;
     this->lookAt = lookAt;
-    this->up = up.Normalize();
     this->fovAlpha = fovAlpha;
-    this->fovBeta = fovBeta;
     this->nearClipPlane = nearClipPlane;
     this->farClipPlane = farClipPlane;
 
@@ -23,14 +21,14 @@ Camera::Camera(aiVector3t<double> center, aiVector3t<double> lookAt, aiVector3t<
     // Compute size of imagePlan
     planeWidth =
             nearClipPlane * tan((fovAlpha / 2.0f) * M_PI / 180.0f) * 2;
-    planeHeight =
-            nearClipPlane * tan((fovBeta / 2.0f) * M_PI / 180.0f) * 2;
+    planeHeight = planeWidth * (1/aspectRatio);
 
     // Cross product
-    aiVector3t<double> left = forward ^ this->up;
-    right = -left;
+    right = (forward ^ aiVector3t<double>(0,0,1)).Normalize();
 
-    originPixel = positionPlan + left * (planeWidth / 2) + up * (planeHeight / 2);
+    up = (right ^ forward).Normalize();
+
+    originPixel = positionPlan - right * (planeWidth / 2) + up * (planeHeight / 2);
 }
 
 aiVector3t<double> Camera::GetPixelPos(int posH, int posW)
