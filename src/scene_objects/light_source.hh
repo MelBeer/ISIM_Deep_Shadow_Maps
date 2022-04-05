@@ -5,7 +5,7 @@
 class LightSource
 {
 public:
-    float intensity = 0;
+    double intensity = 0;
 
     virtual Vector3 GetLightVector(Point3 point) = 0;
 

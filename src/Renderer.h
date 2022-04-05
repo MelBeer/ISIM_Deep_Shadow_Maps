@@ -12,8 +12,8 @@ class Renderer {
 private:
     const aiScene *scene;
     Camera camera;
-    float pixelSize;
-    float ratio;
+    double pixelSize;
+    double ratio;
 
 public:
     Renderer(const aiScene *scene) {
@@ -25,8 +25,8 @@ public:
     Image renderScene(int imgWidth, int imgHeight);
 
 private:
-    aiVector3t<float>
-            findClosestIntersectPt(aiVector3t<float> ray, int &face, int &mesh, aiVector3t<float> nullvalue);
+    aiVector3t<double>
+            findClosestIntersectPt(aiVector3t<double> ray, int &face, int &mesh, aiVector3t<double> nullvalue);
 };
 
 
