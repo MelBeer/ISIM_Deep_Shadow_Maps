@@ -5,6 +5,9 @@
 #ifndef RAYTRACER_RENDERER_H
 #define RAYTRACER_RENDERER_H
 
+#include <thread>
+#include <chrono>
+
 #include "Camera.h"
 #include "Image.h"
 
@@ -25,8 +28,11 @@ public:
     Image renderScene(int imgWidth, int imgHeight);
 
 private:
+
     aiVector3t<double>
             findClosestIntersectPt(aiVector3t<double> ray, int &face, int &mesh, aiVector3t<double> nullvalue);
+    
+    void ThreadFunction(const aiVector3t<double> &refPixel, double w, double h, Image &image);
 };
 
 
