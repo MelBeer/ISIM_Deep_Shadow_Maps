@@ -8,17 +8,22 @@
 #define DEFAULT_KD 0.5
 #define DEFAULT_KS 0.2
 
+void spinThread(const Renderer *renderer, const aiVector3t<double> *refPixel, int starth, int endh, Image *image)
+{
+    for (double h = starth; h < endh; ++h) 
+    {
+        for (double w = 0 ; w < image->width; ++w)
+        {
+            renderer->drawPixel(*refPixel, h, w, *image);
+        }
+    }
+}
 
-
-void Renderer::ThreadFunction(const aiVector3t<double> &refPixel, double w, double h, Image &image)
+void Renderer::drawPixel(const aiVector3t<double> &refPixel, double w, double h, Image &image) const
 {
     aiColor3D pixColor = aiColor3D{0, 0, 0};
     auto actPixel = refPixel + camera.right * pixelSize * w - camera.up * pixelSize * h;  
     aiVector3t<double> ray = (actPixel - camera.center).Normalize();
-    /*
-    if ((h == 0 && w == 0) || (h == imgHeight-1 && w == imgWidth-1))
-        std::cout << "ray : " << ray << '\n';
-    */
 
     int m = 0;
     int f = 0;
@@ -64,10 +69,16 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
 
     auto startpoint = std::chrono::high_resolution_clock::now();
 
+    auto threads = std::vector<std::thread>();
+    unsigned int numThreads = std::thread::hardware_concurrency();
+    threads.reserve(imgHeight);
     for (double h = 0; h < imgHeight; ++h) {
-        for (double w = 0; w < imgWidth; ++w) {
-            ThreadFunction(refPixel, h, w, image);
-        }
+        std::thread thread(spinThread, this, &refPixel, h, h+1, &image);
+        threads.push_back(std::move(thread));
+    }
+
+    for(auto &thread: threads) {
+        thread.join();
     }
 
 
@@ -88,7 +99,7 @@ void Renderer::setCamera() {
 }
 
 aiVector3t<double>
-Renderer::findClosestIntersectPt(aiVector3t<double> ray, int &face, int &mesh, aiVector3t<double> nullvalue) {
+Renderer::findClosestIntersectPt(aiVector3t<double> ray, int &face, int &mesh, aiVector3t<double> nullvalue)  const {
     double faceDist = camera.farClipPlane;
     aiVector3t<double> intersectionPt = nullvalue;
     int nb_intersects = 0;
