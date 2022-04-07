@@ -63,47 +63,21 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
     std::cout << "forward : " << camera.forward << '\n';
 
     std::vector<aiColor3D> pixValues = std::vector<aiColor3D>(imgWidth * imgHeight);
+    // pixValues.reserve(sizeof(aiColor3D) * imgHeight * imgWidth);
     Image image(imgHeight, imgWidth, pixValues);
     
 
     auto startpoint = std::chrono::high_resolution_clock::now();
 
-    unsigned int numThreadsMax = std::thread::hardware_concurrency();
-    if (0 == numThreadsMax)
-        numThreadsMax = imgHeight;
-    unsigned int c_numThreadsMax = numThreadsMax;
-    
     auto threads = std::vector<std::thread>();
-    threads.reserve(c_numThreadsMax);
-
-    unsigned int numThreadsLaunched = 0;
-    const int step = imgHeight / c_numThreadsMax;
-    int left = imgHeight % c_numThreadsMax;
-    int h = 0;
-    int next_h = 0;
+    unsigned int numThreads = std::thread::hardware_concurrency();
     threads.reserve(imgHeight);
-    while(0 < left)
-    {
-        next_h = h + step + 1;
-
-        std::thread thread(spinThread, this, &refPixel, h, next_h, &image);
+    for (double h = 0; h < imgHeight; ++h) {
+        std::thread thread(spinThread, this, &refPixel, h, h+1, &image);
         threads.push_back(std::move(thread));
-        
-        numThreadsLaunched++;
-        h = next_h;
-        left--;
-    }
-    for (int t = numThreadsLaunched; t < c_numThreadsMax; ++t)
-    {
-        next_h = h + step;
-        
-        std::thread thread(spinThread, this, &refPixel, h, next_h, &image);
-        threads.push_back(std::move(thread));
-        h = next_h;
     }
 
-    for(auto &thread: threads)
-    {
+    for(auto &thread: threads) {
         thread.join();
     }
 
