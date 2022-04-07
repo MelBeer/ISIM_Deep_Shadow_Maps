@@ -7,7 +7,7 @@ using namespace std;
 
 int main(int argc, char * argv[]) {
 
-    char * filename = "scenes/monkey.obj";
+    char * filename = "scenes/monkey.dae";
     char * dest_filename = "test/monkey.ppm";
     if (argc > 1)
         filename = argv[1];
@@ -62,7 +62,7 @@ int main(int argc, char * argv[]) {
 
     // Computation start
     Renderer renderer = Renderer{scene};
-    Image img = renderer.renderScene(400, 400);
+    Image img = renderer.renderScene(800, 450);
     img.saveImage(dest_filename);
 
     return 0;

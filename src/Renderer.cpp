@@ -8,19 +8,17 @@
 #define DEFAULT_KD 0.5
 #define DEFAULT_KS 0.2
 
-void spinThread(const Renderer *renderer, const aiVector3t<double> *refPixel, int starth, int endh, Image *image)
+void spinThread(const Renderer *renderer, const aiVector3t<double> *refPixel, int h, Image *image)
 {
-    for (double h = starth; h < endh; ++h) 
-    {
         for (double w = 0 ; w < image->width; ++w)
         {
-            renderer->drawPixel(*refPixel, h, w, *image);
+            renderer->drawPixel(*refPixel, w, h, *image);
         }
-    }
 }
 
 void Renderer::drawPixel(const aiVector3t<double> &refPixel, double w, double h, Image &image) const
 {
+
     aiColor3D pixColor = aiColor3D{0, 0, 0};
     auto actPixel = refPixel + camera.right * pixelSize * w - camera.up * pixelSize * h;  
     aiVector3t<double> ray = (actPixel - camera.center).Normalize();
@@ -49,8 +47,8 @@ void Renderer::drawPixel(const aiVector3t<double> &refPixel, double w, double h,
     else
         pixColor = aiColor3D{0, 0, 0};
 
-    //std::cout << "hewo " << image.getIndex(h, w) << std::endl; 
-    image.pixels[image.getIndex(h, w)] = pixColor;
+    // std::cout << image.getIndex(h,w)<< "," << std::endl;
+    image.pixels[image.getIndex(h,w)] = pixColor;
 }
 
 Image Renderer::renderScene(int imgWidth, int imgHeight) {
@@ -70,10 +68,9 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
     auto startpoint = std::chrono::high_resolution_clock::now();
 
     auto threads = std::vector<std::thread>();
-    unsigned int numThreads = std::thread::hardware_concurrency();
     threads.reserve(imgHeight);
     for (double h = 0; h < imgHeight; ++h) {
-        std::thread thread(spinThread, this, &refPixel, h, h+1, &image);
+        std::thread thread(spinThread, this, &refPixel, h, &image);
         threads.push_back(std::move(thread));
     }
 
@@ -93,9 +90,8 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
 }
 
 void Renderer::setCamera() {
-    this->camera = Camera(aiVector3t<double>(7, 7, 5), aiVector3t<double>(0, 0, 1), aiVector3t<double>(-4, -4, 7), 80, 80,
-            1, 500);
-    camera.SetPixelSize(1600, 900);
+    this->camera = Camera(aiVector3t<double>(0, -5, 1), aiVector3t<double>(0, 0, 0), 80, 16.0/9.0,
+                          1, 500);
 }
 
 aiVector3t<double>
