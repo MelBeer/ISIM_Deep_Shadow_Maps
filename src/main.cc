@@ -18,7 +18,7 @@ int main(int argc, char * argv[]) {
     ifstream file(filename);
     if(!file.is_open())
     {
-        std::cerr << "Unexistent file: \"" << filename << "\" loaded" << std::endl;
+        std::cerr << "Nonexistent file: \"" << filename << "\" loaded" << std::endl;
         return 1;
     }
     file.close();
@@ -38,7 +38,7 @@ int main(int argc, char * argv[]) {
 
     if (nullptr == scene) {
         std::cerr << "invalid file: \"" << filename << "\" loaded" << std::endl;
-        return false;
+        return 1;
     }
 
     // Just some printing
@@ -47,7 +47,6 @@ int main(int argc, char * argv[]) {
 
         if (mesh->HasNormals())
             std::cout << mesh->mName.data << " : has normals\n";
-        std::cout << mesh->mVertices[0] << " pos 0\n";
         std::cout << mesh->mName.data << " : There are " << mesh->mNumFaces << " faces in this mesh" << '\n';
         std::cout << mesh->mName.data << " : There are " << mesh->mNumVertices << " vertices in this mesh" << '\n';
 

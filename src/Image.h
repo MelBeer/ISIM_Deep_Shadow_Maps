@@ -14,9 +14,9 @@ class Image {
 public:
     int h;
     int w;
-    std::vector<aiColor3D> pixels;
+    std::vector<aiVector3t<double>> pixels;
 
-    Image(int h, int w, std::vector<aiColor3D> pixels = std::vector<aiColor3D>())
+    Image(int h, int w, std::vector<aiVector3t<double>> pixels = std::vector<aiVector3t<double>>())
     {
         this->h = h;
         this->w = w;

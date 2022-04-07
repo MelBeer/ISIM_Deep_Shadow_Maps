@@ -4,18 +4,19 @@
 
 #include "Renderer.h"
 
-#define DEFAULT_COLOR aiColor3D{127,127,127}
+#define DEFAULT_COLOR aiVector3t<double>{127,127,127}
 #define DEFAULT_KD 0.5
-#define DEFAULT_KS 0.2
+#define DEFAULT_KS 0.05
+#define NS 15
 
 Image Renderer::renderScene(int imgWidth, int imgHeight) {
     camera.SetPixelSize(imgHeight, imgWidth);
     pixelSize = camera.planeWidth / imgWidth;
     aiVector3t<double> actPixel = camera.originPixel + camera.right * (pixelSize/2) - camera.up * (pixelSize/2);
 
-    std::vector<aiColor3D> pixValues = std::vector<aiColor3D>();
+    std::vector<aiVector3t<double>> pixValues = std::vector<aiVector3t<double>>();
     pixValues.reserve(sizeof(aiColor3D) * imgHeight * imgWidth);
-    aiColor3D pixColor = aiColor3D{0, 0, 0};
+    aiVector3t<double> pixColor = aiVector3t<double>{0, 0, 0};
 
     for (int h = 0; h < imgHeight; ++h) {
         for (int w = 0; w < imgWidth; ++w) {
@@ -34,17 +35,24 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
             if (dist > camera.nearClipPlane)
             {
                 // TODO : iterate over every lights;
-                auto light = scene->mLights[0];
 
-                auto testnormal = mesh->mNormals[face.mIndices[0]];
-                aiColor3D diffuse = aiColor3D(testnormal.x, testnormal.y, testnormal.z) * DEFAULT_COLOR; // DEFAULT_COLOR * DEFAULT_KD * (mesh.mNormals[face.mIndices[0]] * (light->mPosition - intersectionPt)) * light->mAttenuationConstant; // TODO : check for light intensity
-                // TODO : define specular
-                // aiColor3D specular =
+                aiVector3t<double> normal = mesh->mNormals[face.mIndices[0]];
+                auto lightVec = light.position - intersectionPt;
+                double lightDistance = lightVec.Length();
+                lightVec = lightVec.Normalize();
+                aiVector3t<double> diffuse = DEFAULT_COLOR * DEFAULT_KD * std::fabs(normal * lightVec) * (light.intensity / lightDistance);
 
-                pixColor = diffuse;
+                // TODO : Fix Specular
+                auto reflected = (ray - 2 * (normal * ray) * normal).Normalize();
+                auto specular = DEFAULT_COLOR * DEFAULT_KS * (light.intensity / lightDistance) * pow(reflected * lightVec, NS);
+
+                pixColor = diffuse + specular;
+                pixColor.x = pixColor.x > 255 ? 255 : pixColor.x < 0 ? 0 : pixColor.x;
+                pixColor.y = pixColor.y > 255 ? 255 : pixColor.y < 0 ? 0 : pixColor.y;
+                pixColor.z = pixColor.z > 255 ? 255 : pixColor.z < 0 ? 0 : pixColor.z;
             }
             else
-                pixColor = aiColor3D{0, 0, 0};
+                pixColor = aiVector3t<double>{0, 0, 0};
 
             pixValues.emplace_back(pixColor);
 
@@ -58,9 +66,8 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
 }
 
 void Renderer::setCamera() {
-    this->camera = Camera(aiVector3t<double>(0, -5, 1), aiVector3t<double>(0, 0, 0), 80, 16.0/9.0,
+    this->camera = Camera(aiVector3t<double>(1, -3, 1), aiVector3t<double>(0, 0, 0), 80, 16.0/9.0,
                           1, 500);
-    camera.SetPixelSize(1600, 900);
 }
 
 aiVector3t<double>
