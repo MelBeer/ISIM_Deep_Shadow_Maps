@@ -11,16 +11,22 @@
 #include "geometry.h"
 
 class Image {
+
 public:
-    int h;
-    int w;
+
+
+    const int height;
+    const int width;    
     std::vector<aiVector3t<double>> pixels;
 
-    Image(int h, int w, std::vector<aiVector3t<double>> pixels = std::vector<aiVector3t<double>>())
+    Image(const int height, const int width, std::vector<aiVector3t<double>> pixels = std::vector<aiVector3t<double>>())
+    : height(height), width(width), pixels(pixels)
+    {}
+
+    unsigned int getIndex(int h, int w)
+
     {
-        this->h = h;
-        this->w = w;
-        this->pixels = pixels;
+        return h * width + w;
     }
 
     void saveImage(const std::string& fileName);
