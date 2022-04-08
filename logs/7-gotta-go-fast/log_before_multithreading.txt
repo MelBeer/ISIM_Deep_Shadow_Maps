@@ -1,0 +1,8 @@
+Suzanne-mesh : has normals
+(0.46875, -0.757812, 0.242188) pos 0
+Suzanne-mesh : There are 967 faces in this mesh
+Suzanne-mesh : There are 2869 vertices in this mesh
+planeWidth : 1.6782
+forward : (-0.65561, -0.65561, -0.374634)
+Rendering latency: 5154120 microseconds
+Image saved

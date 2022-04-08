@@ -8,6 +8,7 @@ set(SRC
         "src/Image.cpp"
         "src/printer.cpp"
         "src/Camera.cpp"
+        "src/PointLight.cpp"
     "src/"
 )
 

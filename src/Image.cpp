@@ -18,9 +18,9 @@ void Image::saveImage(const std::string& fileName)
         for (int j = 0; j < this->width; j++)
         {
             int index = i * this->width + j;
-            aiColor3D pix = this->pixels[index];
+            aiVector3t<double> pix = this->pixels[index];
 
-            file << char(pix.r) << char(pix.g) << char(pix.b);
+            file << char(pix.x) << char(pix.y) << char(pix.z);
         }
     }
 

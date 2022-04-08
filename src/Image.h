@@ -17,13 +17,14 @@ public:
 
     const int height;
     const int width;    
-    std::vector<aiColor3D> pixels;
+    std::vector<aiVector3t<double>> pixels;
 
-    Image(const int height, const int width, std::vector<aiColor3D> pixels = std::vector<aiColor3D>())
+    Image(const int height, const int width, std::vector<aiVector3t<double>> pixels = std::vector<aiVector3t<double>>())
     : height(height), width(width), pixels(pixels)
     {}
 
     unsigned int getIndex(int h, int w)
+
     {
         return h * width + w;
     }

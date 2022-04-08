@@ -10,11 +10,13 @@
 
 #include "Camera.h"
 #include "Image.h"
+#include "PointLight.h"
 
 class Renderer {
 private:
     const aiScene *scene;
     Camera camera;
+    PointLight light;
     double pixelSize;
     double ratio;
 
@@ -23,6 +25,7 @@ public:
         this->scene = scene;
         ratio = 16.0 / 9.0;
         setCamera();
+        light = PointLight(aiVector3t<double>(5, -5, 5), 10);
     }
     void setCamera();
     Image renderScene(int imgWidth, int imgHeight);
