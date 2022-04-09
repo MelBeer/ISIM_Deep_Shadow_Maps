@@ -9,9 +9,6 @@
 
 class DSM
 {
-
-
-
 public:
     class Visibility
     {
@@ -35,9 +32,12 @@ public:
         visibilities = std::vector<Visibility>();
     }
     static Camera defaultCameraFromPointLight(PointLight pointLight);
-    void draw(Camera camera);
+    void drawMap(Camera camera);
     Visibility visibilityAt(unsigned int h, unsigned int w) const;
     private:
-
         std::vector<Visibility> visibilities;
+    
+private:
+    Visibility drawPixel(double w, double h, Camera camera);
+
 };
