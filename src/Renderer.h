@@ -20,13 +20,14 @@ private:
     PointLight light;
     double pixelSize;
     double ratio;
+    DSM dsm = DSM(400,400);
 
 public:
     Renderer(const aiScene *scene) {
         this->scene = scene;
         ratio = 16.0 / 9.0;
         setCamera();
-        light = PointLight(aiVector3t<double>(5, -5, 5), 10);
+        light = PointLight(aiVector3t<double>(7, -5, 5), 10);
     }
     void setCamera();
     Image renderScene(int imgWidth, int imgHeight);

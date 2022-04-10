@@ -31,11 +31,15 @@ public:
     const unsigned int width;
     const unsigned int size;
     Camera camera;
+
+    Visibility clearVisibility = Visibility(std::vector<double>(0), std::vector<double>(0));
+
     DSM(unsigned int height, unsigned int width)
     : height(height), width(width), size(height * width)
     {
         visibilities = std::vector<Visibility>();
     }
+
     static Camera defaultCameraFromPointLight(PointLight pointLight);
     void drawMap(Camera &camera, const aiScene &scene);
     Visibility visibilityAt(unsigned int h, unsigned int w) const;
