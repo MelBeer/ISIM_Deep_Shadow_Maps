@@ -62,6 +62,7 @@ DSM::Visibility DSM::drawPixel(const aiVector3t<double> &refPixel, double w, dou
 
 void DSM::drawMap(Camera &camera, const aiScene &scene)
 {
+    this->camera = camera;
     camera.SetPixelSize(height, width);
     double pixelSize = camera.planeWidth / width;
 
@@ -104,10 +105,13 @@ DSM::Visibility DSM::visibilityFromPoint(aiVector3t<double> pos) const {
     auto vecToCenter = camera.imagePlanPosition - pointOnImagePlan;
 
     auto vecOnRight = vecToCenter * camera.right;
-    unsigned int w = width/2 - vecOnRight/camera.pixelWidth;
+    int w = width/2 - vecOnRight/camera.pixelWidth;
 
     auto vecOnUp = vecToCenter * camera.up;
-    unsigned int h = height/2 - vecOnUp/camera.pixelHeight;
+    int h = height/2 - vecOnUp/camera.pixelHeight;
 
+    if (0 > h || height <= h || 0 > w || width <= w)
+        return clearVisibility;
     return visibilities[h * width + w];
+    
 }

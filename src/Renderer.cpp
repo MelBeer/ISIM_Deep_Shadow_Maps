@@ -36,15 +36,16 @@ void Renderer::drawPixel(const aiVector3t<double> &refPixel, double w, double h,
 
         if (dist > camera.nearClipPlane)
         {
-            // TODO : iterate over every lights;
 
             aiVector3t<double> normal = mesh->mNormals[face.mIndices[0]];
             auto lightVec = light.position - intersectionPt;
             double lightDistance = lightVec.Length();
             lightVec = lightVec.Normalize();
-            aiVector3t<double> diffuse = DEFAULT_COLOR * DEFAULT_KD * std::fabs(normal * lightVec) * (light.intensity / lightDistance);
 
-            // TODO : Fix Specular
+            const auto dsmVis = dsm.visibilityFromPoint(intersectionPt);
+
+            aiVector3t<double> diffuse = DEFAULT_COLOR * DEFAULT_KD * std::fabs(normal * lightVec) * (light.intensity / lightDistance) * dsmVis.function(dist); 
+
             auto reflected = (ray - 2 * (normal * ray) * normal).Normalize();
             auto specular = DEFAULT_COLOR * DEFAULT_KS * (light.intensity / lightDistance) * pow(reflected * lightVec, NS);
 
@@ -72,7 +73,6 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
     // pixValues.reserve(sizeof(aiColor3D) * imgHeight * imgWidth);
     Image image(imgHeight, imgWidth, pixValues);
     
-    auto dsm = DSM(400,400);
     auto dsmcam = DSM::defaultCameraFromPointLight(light);
     dsm.drawMap(dsmcam, *scene);
 
