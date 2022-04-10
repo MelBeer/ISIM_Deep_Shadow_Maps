@@ -96,6 +96,18 @@ void DSM::Visibility::compress()
 
 Camera DSM::defaultCameraFromPointLight(PointLight pointLight)
 {
-    return Camera(pointLight.position, aiVector3t<double>(0, 0, 0), 80, 1/1,
+    return Camera(pointLight.position, aiVector3t<double>(0, 0, 0), 80, 1/1,     
                 1, 5000);
+}
+DSM::Visibility DSM::visibilityFromPoint(aiVector3t<double> pos) const {
+    auto pointOnImagePlan = camera.center + (pos - camera.center).Normalize() * camera.nearClipPlane;
+    auto vecToCenter = camera.imagePlanPosition - pointOnImagePlan;
+
+    auto vecOnRight = vecToCenter * camera.right;
+    unsigned int w = width/2 - vecOnRight/camera.pixelWidth;
+
+    auto vecOnUp = vecToCenter * camera.up;
+    unsigned int h = height/2 - vecOnUp/camera.pixelHeight;
+
+    return visibilities[h * width + w];
 }
