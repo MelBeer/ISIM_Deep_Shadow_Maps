@@ -2,10 +2,14 @@
 
 #include <vector>
 #include <algorithm>
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include "geometry.h"
 #include "Camera.h"
 #include "PointLight.h"
 
-#define DSM_SAMPLES 20000
+#define SAMPLE_STEP 0.0001f
 
 class DSM
 {
@@ -32,12 +36,12 @@ public:
         visibilities = std::vector<Visibility>();
     }
     static Camera defaultCameraFromPointLight(PointLight pointLight);
-    void drawMap(Camera camera);
+    void drawMap(Camera &camera, const aiScene &scene);
     Visibility visibilityAt(unsigned int h, unsigned int w) const;
     private:
         std::vector<Visibility> visibilities;
     
 private:
-    Visibility drawPixel(double w, double h, Camera camera);
-
+    Visibility drawPixel(const aiVector3t<double> &refPixel, double w, double h, const aiScene &scene, const Camera &camera, const double pixelsize);
+    void spinThread(const aiVector3t<double> *refPixel, const aiScene *scene, double h, const Camera *camera, const double pixelSize);
 };
