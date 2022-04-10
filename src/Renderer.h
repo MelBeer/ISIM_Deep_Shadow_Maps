@@ -36,8 +36,6 @@ private:
     aiVector3t<double>
             findClosestIntersectPt(aiVector3t<double> ray, int &face, int &mesh, aiVector3t<double> nullvalue) const;
 
-    // static void spinThread(Renderer *renderer, const aiVector3t<double> &refPixel, int starth, int endh, Image &image);
-
 };
 
 
