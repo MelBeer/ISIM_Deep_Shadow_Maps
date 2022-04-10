@@ -26,14 +26,16 @@ public:
     const unsigned int height;
     const unsigned int width;
     const unsigned int size;
+    Camera camera;
     DSM(unsigned int height, unsigned int width)
     : height(height), width(width), size(height * width)
     {
         visibilities = std::vector<Visibility>();
     }
     static Camera defaultCameraFromPointLight(PointLight pointLight);
-    void drawMap(Camera camera);
+    void drawMap(Camera camera); // Must set origin as camera.center
     Visibility visibilityAt(unsigned int h, unsigned int w) const;
+    Visibility visibilityFromPoint(aiVector3t<double> pos) const;
     private:
         std::vector<Visibility> visibilities;
     
