@@ -98,7 +98,7 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
 }
 
 void Renderer::setCamera() {
-    this->camera = Camera(aiVector3t<double>(1, -3, 1), aiVector3t<double>(0, 0, 0), 80, 16.0/9.0,
+    this->camera = Camera(aiVector3t<double>(4, -4, 4), aiVector3t<double>(0, 0, 2), 80, 16.0/9.0,
                           1, 500);
 }
 
