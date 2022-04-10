@@ -11,6 +11,7 @@
 #include "Camera.h"
 #include "Image.h"
 #include "PointLight.h"
+#include "DSM.hpp"
 
 class Renderer {
 private:

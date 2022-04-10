@@ -72,6 +72,9 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
     // pixValues.reserve(sizeof(aiColor3D) * imgHeight * imgWidth);
     Image image(imgHeight, imgWidth, pixValues);
     
+    auto dsm = DSM(400,400);
+    auto dsmcam = DSM::defaultCameraFromPointLight(light);
+    dsm.drawMap(dsmcam, *scene);
 
     auto startpoint = std::chrono::high_resolution_clock::now();
 
