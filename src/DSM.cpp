@@ -38,36 +38,77 @@ double DSM::Visibility::function(const double z) const
 }
 
 DSM::Visibility DSM::drawPixel(const aiVector3t<double> &refPixel, double w, double h, const aiScene &scene, const Camera &camera, const double pixelSize)
-{
-    auto actPixel = refPixel + camera.right * pixelSize * w - camera.up * pixelSize * h;
-    aiVector3t<double> ray = (actPixel - camera.center).Normalize();
+{   
+    struct FaceData
+    {
+        double min;
+        double max;
+        double intersections;
+    };
     
-    auto zs = std::vector<double>();
-    auto Vs = std::vector<double>();
+    std::unordered_map<aiFace *, FaceData> faceMap;
 
-    double faceDist = camera.farClipPlane;
-    aiVector3t<double> intersectionPt = camera.center;
-    for (int m = 0; m < scene.mNumMeshes; ++m) {
-        auto actMesh = scene.mMeshes[m];
+    for (unsigned int i = 0; i < raysPerPixel; i++)
+    {
+        auto actPixel = refPixel + camera.right * pixelSize * w - camera.up * pixelSize * h;
+        aiVector3t<double> ray = (actPixel - camera.center).Normalize();
 
-        for (int f = 0; f < actMesh->mNumFaces; ++f) {
-            auto actFace = actMesh->mFaces[f];
+        aiFace *facePointer;
+        double faceDist = camera.farClipPlane;
+        aiVector3t<double> intersectionPt = camera.center;
 
-            aiVector3t<double> intPt = planeIntersect(actFace, *actMesh, camera.center, ray, camera.center);
+        for (int m = 0; m < scene.mNumMeshes; ++m) {
+            auto actMesh = scene.mMeshes[m];
 
-            double dist = (intPt - camera.center).Length();
-            if (dist > camera.nearClipPlane && dist < faceDist)
-            {
-                faceDist = dist;
-                intersectionPt = intPt;
+            for (int f = 0; f < actMesh->mNumFaces; ++f) {
+                auto actFace = actMesh->mFaces[f];
+
+                aiVector3t<double> intPt = planeIntersect(actFace, *actMesh, camera.center, ray, camera.center);
+
+                double dist = (intPt - camera.center).Length();
+                if (dist > camera.nearClipPlane && dist < faceDist)
+                {
+                    facePointer = &actFace;
+                    faceDist = dist;
+                    intersectionPt = intPt;
+                }
             }
+        }
+        if (faceDist != camera.farClipPlane)
+        {
+            auto zMin = faceDist;
+            auto zMax = faceDist;
+            double intersections = 0;
+            auto faceEntry = faceMap.find(facePointer);
+            if (faceEntry != faceMap.end())
+            {
+                zMin = faceMap[facePointer].min;
+                zMax = faceMap[facePointer].max;
+                intersections = faceMap[facePointer].intersections;
+            }
+            auto data = FaceData();
+            data.min = std::min(faceDist, zMin);
+            data.max = std::max(faceDist, zMax);
+            data.intersections = intersections + 1;
+            faceMap[facePointer] = data;
         }
     }
 
-    zs.push_back(faceDist);
-    Vs.push_back(1);
-    zs.push_back(faceDist + 0.001);
-    Vs.push_back(0.1);
+    auto zs = std::vector<double>();
+    auto Vs = std::vector<double>();
+    double proportion = ((1 - shadowIntensity) / raysPerPixel);
+    for(const auto & [ facePtr, data ] : faceMap)
+    {
+        const auto z0 = data.min;
+        const auto z1 = data.max;
+        const auto V0 = 1;
+        const auto V1 = V0 - proportion * data.intersections;
+        zs.push_back(z0);
+        zs.push_back(z1);
+        Vs.push_back(V0);
+        Vs.push_back(V1);
+    }
+
     return Visibility(zs, Vs);
 }
 

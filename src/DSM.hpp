@@ -5,6 +5,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <unordered_map>
 #include "geometry.h"
 #include "Camera.h"
 #include "PointLight.h"
@@ -31,6 +32,9 @@ public:
     const unsigned int height;
     const unsigned int width;
     const unsigned int size;
+    const unsigned int raysPerPixel = 1;
+    const double shadowIntensity = 0.2;
+
     Camera camera;
 
     Visibility clearVisibility = Visibility(std::vector<double>(0), std::vector<double>(0));
