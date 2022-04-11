@@ -18,12 +18,23 @@ double DSM::Visibility::function(const double z) const
         return 1;
     if (sample_zs.back() < z)
         return sample_Vs.back();
-    double left_v = 1;
-    auto v_at_first_higher_z = std::upper_bound(sample_zs.begin(),sample_zs.end(), z);
-    if (v_at_first_higher_z != sample_zs.begin())
-        left_v = *(v_at_first_higher_z - 1);
-    const double right_v = *v_at_first_higher_z;
-    return (left_v + right_v) / 2;
+    double v0 = 1;
+    double z0 = 0;
+    double v1 = 1;
+    double z1 = 0;
+    for (unsigned int i = 1; i < sample_zs.size(); i++)
+    {
+        if (sample_zs[i] > z)
+        {
+            v1 = sample_Vs[i];
+            z1 = sample_zs[i];
+            break;
+        }
+        z0 = sample_zs[i];
+        v0 = sample_Vs[i];
+    }
+    // yp = y0 + ((y1-y0)/(x1-x0)) * (xp - x0);
+    return v0 + ((v1-v0)/(z1-z0)) * (z - z0);
 }
 
 DSM::Visibility DSM::drawPixel(const aiVector3t<double> &refPixel, double w, double h, const aiScene &scene, const Camera &camera, const double pixelSize)
