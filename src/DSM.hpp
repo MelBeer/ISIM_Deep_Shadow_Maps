@@ -20,6 +20,7 @@ public:
             std::vector<double> sample_zs;
             std::vector<double> sample_Vs;
         public:
+            Visibility() {}
             Visibility(const std::vector<double> &sample_zs, const std::vector<double> &sample_Vs)
             : sample_zs(sample_zs), sample_Vs(sample_Vs)
             {}
@@ -37,7 +38,7 @@ public:
     DSM(unsigned int height, unsigned int width)
     : height(height), width(width), size(height * width)
     {
-        visibilities = std::vector<Visibility>();
+        visibilities = std::vector<Visibility>(size);
     }
 
     static Camera defaultCameraFromPointLight(PointLight pointLight);

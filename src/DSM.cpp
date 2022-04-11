@@ -7,7 +7,7 @@ void DSM::spinThread(const aiVector3t<double> *refPixel, const aiScene *scene, d
 {
         for (double w = 0 ; w < width; ++w)
         {
-            this->drawPixel(*refPixel, w, h, *scene, *camera, pixelSize);
+            visibilities[h * width + w] = this->drawPixel(*refPixel, w, h, *scene, *camera, pixelSize);
         }
 }
 
@@ -60,9 +60,9 @@ DSM::Visibility DSM::drawPixel(const aiVector3t<double> &refPixel, double w, dou
     return Visibility(zs, Vs);
 }
 
-void DSM::drawMap(Camera &camera, const aiScene &scene)
+void DSM::drawMap(Camera &cam, const aiScene &scene)
 {
-    this->camera = camera;
+    this->camera = cam;
     camera.SetPixelSize(height, width);
     double pixelSize = camera.planeWidth / width;
 
@@ -88,8 +88,6 @@ void DSM::drawMap(Camera &camera, const aiScene &scene)
 
     auto duration = stop - start;
     std::cout << "Shadowmapping latency: " << duration << " microseconds" << std::endl;
-
-    return;
 }
 
 void DSM::Visibility::compress()
@@ -97,18 +95,24 @@ void DSM::Visibility::compress()
 
 Camera DSM::defaultCameraFromPointLight(PointLight pointLight)
 {
-    return Camera(pointLight.position, aiVector3t<double>(0, 0, 0), 80, 1/1,     
-                1, 5000);
+    return {pointLight.position, aiVector3t<double>(0, 0, 0), 80, 1/1,
+                1, 5000};
 }
 DSM::Visibility DSM::visibilityFromPoint(aiVector3t<double> pos) const {
     auto pointOnImagePlan = camera.center + (pos - camera.center).Normalize() * camera.nearClipPlane;
-    auto vecToCenter = camera.imagePlanPosition - pointOnImagePlan;
+    auto vecFromOrigin = pointOnImagePlan - camera.originPixel;
 
-    auto vecOnRight = vecToCenter * camera.right;
-    int w = width/2 - vecOnRight/camera.pixelWidth;
+    auto rayRightAngle = (pos - camera.center).Normalize() * camera.right;
 
-    auto vecOnUp = vecToCenter * camera.up;
-    int h = height/2 - vecOnUp/camera.pixelHeight;
+    //std::cout << vecFromOrigin * camera.right << std::endl;
+
+    auto vecOnRight = vecFromOrigin * camera.right;
+    int w = (int)(vecOnRight/camera.pixelWidth);
+
+    auto vecOnUp = vecFromOrigin * camera.up;
+    int h = -(int)(vecOnUp/camera.pixelHeight);
+
+    //std::cout << h << " | " << w  << " | " << h * width + w << std::endl;
 
     if (0 > h || height <= h || 0 > w || width <= w)
         return clearVisibility;
