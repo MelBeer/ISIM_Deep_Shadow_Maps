@@ -44,7 +44,7 @@ void Renderer::drawPixel(const aiVector3t<double> &refPixel, double w, double h,
 
             const auto dsmVis = dsm.visibilityFromPoint(intersectionPt);
 
-            aiVector3t<double> diffuse = DEFAULT_COLOR * DEFAULT_KD * std::fabs(normal * lightVec) * (light.intensity / lightDistance) * dsmVis.function(dist); 
+            aiVector3t<double> diffuse = DEFAULT_COLOR * DEFAULT_KD * std::fabs(normal * lightVec) * (light.intensity / lightDistance) * dsmVis.function(dist);
 
             auto reflected = (ray - 2 * (normal * ray) * normal).Normalize();
             auto specular = DEFAULT_COLOR * DEFAULT_KS * (light.intensity / lightDistance) * pow(reflected * lightVec, NS);

@@ -32,7 +32,7 @@ public :
     Camera(aiVector3t<double> center, aiVector3t<double> lookAt, double fovAlpha, double aspectRatio,
            double nearClipPlane, double farClipPlane);
 
-    void SetPixelSize(int height, int width);
+    void SetPixelSize(unsigned int height, unsigned int width);
 
     aiVector3t<double> GetPixelPos(int posH, int posW);
 

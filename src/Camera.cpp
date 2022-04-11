@@ -40,9 +40,9 @@ aiVector3t<double> Camera::GetPixelPos(int posH, int posW)
     return pixelPosition;
 }
 
-void Camera::SetPixelSize(int height, int width)
+void Camera::SetPixelSize(unsigned int height, unsigned int width)
 {
-    pixelHeight = planeHeight / height;
-    pixelWidth = planeWidth / width;
+    pixelHeight = planeHeight / (double)height;
+    pixelWidth = planeWidth / (double)width;
     originPixel = originPixel + -up * (pixelHeight / 2) + right * (pixelWidth / 2);
 }
