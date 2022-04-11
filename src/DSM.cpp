@@ -66,8 +66,8 @@ DSM::Visibility DSM::drawPixel(const aiVector3t<double> &refPixel, double w, dou
 
     zs.push_back(faceDist);
     Vs.push_back(1);
-    zs.push_back(faceDist + 1);
-    Vs.push_back(0.2);
+    zs.push_back(faceDist + 0.001);
+    Vs.push_back(0.1);
     return Visibility(zs, Vs);
 }
 
@@ -113,22 +113,12 @@ DSM::Visibility DSM::visibilityFromPoint(aiVector3t<double> pos) const {
     auto pointOnImagePlan = camera.center + (pos - camera.center).Normalize() * camera.nearClipPlane;
     auto vecFromOrigin = pointOnImagePlan - camera.originPixel;
 
-    //Thales Theorem
-    auto rayToPoint = (pos - camera.center).Normalize();
-    auto rayOnRight = rayToPoint * camera.right;
-    auto rightDepl = (camera.nearClipPlane * rayOnRight) / (rayToPoint * camera.forward);
-    auto rayOnUp = rayToPoint * camera.up;
-    auto upDepl = (camera.nearClipPlane * rayOnUp) / (rayToPoint * camera.forward);
-
-    //std::cout << vecFromOrigin * camera.right << std::endl;
-
     auto vecOnRight = vecFromOrigin * camera.right;
-    int w = (int)(vecOnRight/camera.pixelWidth); //width/2 + (int)(rightDepl/camera.pixelWidth);
+    int w = (int)(vecOnRight/camera.pixelWidth);
 
     auto vecOnUp = vecFromOrigin * camera.up;
-    int h = -(int)(vecOnUp/camera.pixelHeight); //height/2 + (int)(upDepl/camera.pixelHeight);
+    int h = -(int)(vecOnUp/camera.pixelHeight);
 
-    std::cout << h << " | " << w  << " | " << h * width + w << std::endl;
 
     if (0 > h || height <= h || 0 > w || width <= w)
         return clearVisibility;
