@@ -2,6 +2,11 @@
 
 #define MIN_STEP 0.1f
 
+double myRand() {
+    static thread_local std::mt19937 generator;
+    std::uniform_real_distribution<double> distribution(-0.5,0.5);
+    return distribution(generator);
+}
 
 void DSM::spinThread(const aiVector3t<double> *refPixel, const aiScene *scene, double h, const Camera *camera, const double pixelSize)
 {
@@ -47,10 +52,11 @@ DSM::Visibility DSM::drawPixel(const aiVector3t<double> &refPixel, double w, dou
     };
     
     std::unordered_map<aiFace *, FaceData> faceMap;
+    auto usualPixel = refPixel + camera.right * pixelSize * w - camera.up * pixelSize * h;
 
     for (unsigned int i = 0; i < raysPerPixel; i++)
     {
-        auto actPixel = refPixel + camera.right * pixelSize * w - camera.up * pixelSize * h;
+        auto actPixel = (usualPixel) + (camera.right * pixelSize * myRand()) - (camera.up * pixelSize * myRand());
         aiVector3t<double> ray = (actPixel - camera.center).Normalize();
 
         aiFace *facePointer;
