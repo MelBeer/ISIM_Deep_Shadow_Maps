@@ -102,17 +102,22 @@ DSM::Visibility DSM::visibilityFromPoint(aiVector3t<double> pos) const {
     auto pointOnImagePlan = camera.center + (pos - camera.center).Normalize() * camera.nearClipPlane;
     auto vecFromOrigin = pointOnImagePlan - camera.originPixel;
 
-    auto rayRightAngle = (pos - camera.center).Normalize() * camera.right;
+    //Thales Theorem
+    auto rayToPoint = (pos - camera.center).Normalize();
+    auto rayOnRight = rayToPoint * camera.right;
+    auto rightDepl = (camera.nearClipPlane * rayOnRight) / (rayToPoint * camera.forward);
+    auto rayOnUp = rayToPoint * camera.up;
+    auto upDepl = (camera.nearClipPlane * rayOnUp) / (rayToPoint * camera.forward);
 
     //std::cout << vecFromOrigin * camera.right << std::endl;
 
     auto vecOnRight = vecFromOrigin * camera.right;
-    int w = (int)(vecOnRight/camera.pixelWidth);
+    int w = (int)(vecOnRight/camera.pixelWidth); //width/2 + (int)(rightDepl/camera.pixelWidth);
 
     auto vecOnUp = vecFromOrigin * camera.up;
-    int h = -(int)(vecOnUp/camera.pixelHeight);
+    int h = -(int)(vecOnUp/camera.pixelHeight); //height/2 + (int)(upDepl/camera.pixelHeight);
 
-    //std::cout << h << " | " << w  << " | " << h * width + w << std::endl;
+    std::cout << h << " | " << w  << " | " << h * width + w << std::endl;
 
     if (0 > h || height <= h || 0 > w || width <= w)
         return clearVisibility;
