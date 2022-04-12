@@ -27,7 +27,7 @@ public:
         this->scene = scene;
         ratio = 16.0 / 9.0;
         setCamera();
-        light = PointLight(aiVector3t<double>(0, -10, 5), 25);
+        light = PointLight(aiVector3t<double>(0, -10, 5), 50);
     }
     void setCamera();
     Image renderScene(int imgWidth, int imgHeight);

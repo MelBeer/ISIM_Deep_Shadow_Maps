@@ -10,10 +10,10 @@ double myRand() {
 
 double interpolation(const double z, const double z0, const double v0, const double z1, const double v1)
 {
-    // if (z < z0)
-    //     return v0;
-    // if (z > z1)
-    //     return v1;
+    if (z < z0)
+        return v0;
+    if (z > z1)
+        return v1;
     auto v = (v0 + ((v1-v0)/(z1-z0)) * (z - z0));
     if (v > 1)
     {
@@ -35,12 +35,12 @@ struct pair_hash {
 
 void DSM::Visibility::addVisibilityLoss(const double z0, const double z1, const double initial_V1)
 {
-    if (this->samples.size() == 0)
+    /*if (this->samples.size() <= 2)
     {
         samples.push_back({z0, 1});
         samples.push_back({z1,initial_V1});
         return;
-    }
+    }*/
     
     const auto upper_bound_z0 = std::upper_bound(this->samples.begin(), this->samples.end(),
                                                   z0, DSM::Visibility::CompareZ());
@@ -106,7 +106,7 @@ void DSM::Visibility::addVisibilityLoss(const double z0, const double z1, const 
     }
 
     
-    for (auto it = upper_bound_z1; it <  this->samples.end(); it++)
+    for (auto it = lower_bound_z1; it <  this->samples.end(); it++)
     {
         it->v -= V_diff;
         if (it->v > 1)
@@ -115,12 +115,14 @@ void DSM::Visibility::addVisibilityLoss(const double z0, const double z1, const 
             abort();
         }
     }
-    
 
-    this->samples.insert(upper_bound_z0, {z0, V0});
-    const auto new_lower_bound_it1 = std::lower_bound(this->samples.begin(), this->samples.end(),
+    const auto z1_pos = std::lower_bound(this->samples.begin(), this->samples.end(),
                                        z1, DSM::Visibility::CompareZ());
-    this->samples.insert(new_lower_bound_it1, {z1, V1});
+    this->samples.insert(z1_pos, {z1, V1}); 
+    const auto z0_pos = std::lower_bound(this->samples.begin(), this->samples.end(),
+                                       z0, DSM::Visibility::CompareZ());
+    this->samples.insert(z0_pos, {z0, V0});
+
 
 
 }
@@ -141,13 +143,23 @@ double DSM::Visibility::function(const double z) const
         return 1;
     if (samples.back().z < z)
         return samples.back().v;
-    const auto pt0 = std::lower_bound(this->samples.begin(), this->samples.end(), z, DSM::Visibility::CompareZ());
-    const auto pt1 = std::upper_bound(this->samples.begin(), this->samples.end(), z, DSM::Visibility::CompareZ());
-    const auto v0 = pt0->v;
-    const auto v1 = pt1->v;
-    const auto z0 = pt0->z;
-    const auto z1 = pt1->z;
-    const auto v = interpolation(z, z0, v0, z1, v1);
+    double v0 = 1;
+    double z0 = 0;
+    double v1 = 1;
+    double z1 = 0;
+    for (unsigned int i = 1; i < samples.size(); i++)
+    {
+        if (samples[i].z > z)
+        {
+            v1 = samples[i].v;
+            z1 = samples[i].z;
+            break;
+        }
+        z0 = samples[i].z;
+        v0 = samples[i].v;
+    }
+
+    const auto v = (v0 + ((v1-v0)/(z1-z0)) * (z - z0));
     return v;
 }
 

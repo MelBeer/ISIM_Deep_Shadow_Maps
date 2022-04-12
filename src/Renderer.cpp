@@ -80,6 +80,7 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
     
     auto dsmcam = DSM::defaultCameraFromPointLight(light);
     dsm.drawMap(dsmcam, *scene);
+    std::cout << dsm.visibilityFromPoint({0, 0, 0}) << std::endl;
 
     auto startpoint = std::chrono::high_resolution_clock::now();
 

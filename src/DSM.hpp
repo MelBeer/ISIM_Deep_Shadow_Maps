@@ -13,6 +13,7 @@
 #include "PointLight.h"
 
 #define SHADOW 0.2f
+#define DRAWLIMIT 5000000
 
 class DSM
 {
@@ -31,26 +32,41 @@ public:
             std::vector<Point> samples;
             Visibility()
             : samples(std::vector<Point>())
-            {}
+            {
+                samples.push_back({0, 1});
+                samples.push_back({DRAWLIMIT, 1});
+            }
+            
             void compress();
             void addVisibilityLoss(double z0, double z1, double V1);
             double function(const double z) const ;
             unsigned int size() const { return samples.size(); };
             struct CompareZ {
-                bool operator()(const double &val, const Point &item) const {return val < item.z;}
-                bool operator()(const Point &item, const double &val) const {return val < item.z;}
+                bool operator()(const double &val, const Point &item) const {return val > item.z;}
+                bool operator()(const Point &item, const double &val) const {return val > item.z;}
                 bool operator()(const Point &a, const Point &b) const {return a.z < b.z;}
             };
             struct CompareV {
-                bool operator()(const double &val, const Point &item) const {return val < item.v;}
-                bool operator()(const Point &item, const double &val) const {return val < item.v;}
+                bool operator()(const double &val, const Point &item) const {return val > item.v;}
+                bool operator()(const Point &item, const double &val) const {return val > item.v;}
             };
+            friend std::ostream &operator<<(std::ostream &os, const Visibility &visibility)
+            {
+                os << "Visibility of size :" << visibility.size() << "[\n";
+
+                for (auto pt: visibility.samples)
+                {
+                    os << "z:" << pt.z << ",v:" << pt.v << "\n";
+                }
+                os << "]";
+                return os;
+            }
     };
 
     const unsigned int height;
     const unsigned int width;
     const unsigned int size;
-    const unsigned int raysPerPixel = 1;
+    const unsigned int raysPerPixel = 4;
     
 
     Camera camera;
