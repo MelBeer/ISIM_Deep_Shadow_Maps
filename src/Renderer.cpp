@@ -43,11 +43,6 @@ void Renderer::drawPixel(const aiVector3t<double> &refPixel, double w, double h,
             lightVec = lightVec.Normalize();
 
             const auto dsmVis = dsm.visibilityFromPoint(intersectionPt);
-            // if (dsmVis.function(dist) > 0.9)
-            // {
-            //     std::cout << "aille\n";
-            // }
-
 
             aiVector3t<double> diffuse = DEFAULT_COLOR * DEFAULT_KD * std::fabs(normal * lightVec) * (light.intensity / lightDistance) * dsmVis.function(dist);
 
@@ -80,7 +75,7 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
     
     auto dsmcam = DSM::defaultCameraFromPointLight(light);
     dsm.drawMap(dsmcam, *scene);
-    std::cout << dsm.visibilityFromPoint({0, 0, 0}) << std::endl;
+    std::cout << "Visibility at {0, 0, 0}" <<  dsm.visibilityFromPoint({0, 0, 0}) << std::endl;
 
     auto startpoint = std::chrono::high_resolution_clock::now();
 

@@ -52,11 +52,10 @@ public:
             };
             friend std::ostream &operator<<(std::ostream &os, const Visibility &visibility)
             {
-                os << "Visibility of size :" << visibility.size() << "[\n";
-
+                os << "[";
                 for (auto pt: visibility.samples)
                 {
-                    os << "z:" << pt.z << ",v:" << pt.v << "\n";
+                    os << "z:" << pt.z << " , v:" << pt.v << " | ";
                 }
                 os << "]";
                 return os;
