@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <random>
 #include <vector>
 #include <algorithm>
@@ -11,34 +12,50 @@
 #include "Camera.h"
 #include "PointLight.h"
 
-#define SAMPLE_STEP 0.0001f
+#define SHADOW 0.2f
 
 class DSM
 {
 public:
     class Visibility
     {
-        private:
-            std::vector<double> sample_zs;
-            std::vector<double> sample_Vs;
         public:
-            Visibility() {}
-            Visibility(const std::vector<double> &sample_zs, const std::vector<double> &sample_Vs)
-            : sample_zs(sample_zs), sample_Vs(sample_Vs)
+        struct Point
+        {
+            double z;
+            double v;
+        };
+        private:
+            
+        public:
+            std::vector<Point> samples;
+            Visibility()
+            : samples(std::vector<Point>())
             {}
             void compress();
+            void addVisibilityLoss(double z0, double z1, double V1);
             double function(const double z) const ;
+            unsigned int size() const { return samples.size(); };
+            struct CompareZ {
+                bool operator()(const double &val, const Point &item) const {return val < item.z;}
+                bool operator()(const Point &item, const double &val) const {return val < item.z;}
+                bool operator()(const Point &a, const Point &b) const {return a.z < b.z;}
+            };
+            struct CompareV {
+                bool operator()(const double &val, const Point &item) const {return val < item.v;}
+                bool operator()(const Point &item, const double &val) const {return val < item.v;}
+            };
     };
 
     const unsigned int height;
     const unsigned int width;
     const unsigned int size;
     const unsigned int raysPerPixel = 1;
-    const double shadowIntensity = 0.2;
+    
 
     Camera camera;
 
-    Visibility clearVisibility = Visibility(std::vector<double>(0), std::vector<double>(0));
+    Visibility clearVisibility = Visibility();
 
     DSM(unsigned int height, unsigned int width)
     : height(height), width(width), size(height * width)
@@ -50,6 +67,7 @@ public:
     void drawMap(Camera &camera, const aiScene &scene);
     Visibility visibilityAt(unsigned int h, unsigned int w) const;
     Visibility visibilityFromPoint(aiVector3t<double> pos) const;
+
     private:
         std::vector<Visibility> visibilities;
     

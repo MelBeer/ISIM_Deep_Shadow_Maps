@@ -43,6 +43,11 @@ void Renderer::drawPixel(const aiVector3t<double> &refPixel, double w, double h,
             lightVec = lightVec.Normalize();
 
             const auto dsmVis = dsm.visibilityFromPoint(intersectionPt);
+            // if (dsmVis.function(dist) > 0.9)
+            // {
+            //     std::cout << "aille\n";
+            // }
+
 
             aiVector3t<double> diffuse = DEFAULT_COLOR * DEFAULT_KD * std::fabs(normal * lightVec) * (light.intensity / lightDistance) * dsmVis.function(dist);
 
