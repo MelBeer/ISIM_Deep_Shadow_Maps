@@ -61,7 +61,7 @@ int main(int argc, char * argv[]) {
 
     // Computation start
     Renderer renderer = Renderer{scene};
-    Image img = renderer.renderScene(800, 450);
+    Image img = renderer.renderScene(1600, 900);
     img.saveImage(dest_filename);
 
     return 0;
