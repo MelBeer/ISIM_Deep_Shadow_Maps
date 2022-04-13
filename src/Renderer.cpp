@@ -44,7 +44,7 @@ void Renderer::drawPixel(const aiVector3t<double> &refPixel, double w, double h,
 
             const auto dsmVis = dsm.visibilityFromPoint(intersectionPt);
 
-            aiVector3t<double> diffuse = DEFAULT_COLOR * DEFAULT_KD * std::fabs(normal * lightVec) * (light.intensity / lightDistance) * dsmVis.function(dist);
+            aiVector3t<double> diffuse = DEFAULT_COLOR * DEFAULT_KD * std::fabs(normal * lightVec) * (light.intensity / lightDistance) * (dsmVis.function(lightDistance) * 0.8 + 0.2);
 
             auto reflected = (ray - 2 * (normal * ray) * normal).Normalize();
             auto specular = DEFAULT_COLOR * DEFAULT_KS * (light.intensity / lightDistance) * pow(reflected * lightVec, NS);
@@ -75,7 +75,11 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
     
     auto dsmcam = DSM::defaultCameraFromPointLight(light);
     dsm.drawMap(dsmcam, *scene);
-    std::cout << "Visibility at {0, 0, 0}" <<  dsm.visibilityFromPoint({0, 0, 0}) << std::endl;
+    std::cout << "Visibility at {1, 4, 2}" <<  dsm.visibilityFromPoint({1, 4, 2}) << std::endl;
+    std::cout << "Visibility at {1, 4, 2} for 10 : " <<  dsm.visibilityFromPoint({1, 4, 2}).function(10) << std::endl;
+    /*for (auto vis : dsm.visibilities) {
+        std::cout << vis << std::endl;
+    }*/
 
     auto startpoint = std::chrono::high_resolution_clock::now();
 
@@ -102,7 +106,7 @@ Image Renderer::renderScene(int imgWidth, int imgHeight) {
 }
 
 void Renderer::setCamera() {
-    this->camera = Camera(aiVector3t<double>(4, -4, 4), aiVector3t<double>(0, 0, 2), 80, 16.0/9.0,
+    this->camera = Camera(aiVector3t<double>(7, -7, 5), aiVector3t<double>(0, 0, 2), 80, 16.0/9.0,
                           1, 500);
 }
 

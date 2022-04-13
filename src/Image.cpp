@@ -26,5 +26,5 @@ void Image::saveImage(const std::string& fileName)
 
     file.close();
 
-    std::cout << "Image saved";
+    std::cout << "Image saved\n";
 }

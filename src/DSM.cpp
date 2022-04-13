@@ -145,9 +145,9 @@ double DSM::Visibility::function(const double z) const
         return samples.back().v;
     double v0 = 1;
     double z0 = 0;
-    double v1 = 1;
-    double z1 = 0;
-    for (unsigned int i = 1; i < samples.size(); i++)
+    double v1 = samples.back().v;
+    double z1 = DRAWLIMIT;
+    for (unsigned int i = 0; i < samples.size(); i++)
     {
         if (samples[i].z > z)
         {
@@ -229,7 +229,7 @@ DSM::Visibility DSM::drawPixel(const aiVector3t<double> &refPixel, double w, dou
         const auto z0 = data.min;
         const auto z1 = data.max;
         const auto V1 = 1 - (data.intersections / raysPerPixel);
-        visibility.addVisibilityLoss(z0,z1,V1);
+        visibility.addVisibilityLoss(z0+1,z1+1,V1);
     }
 
     return visibility;
@@ -270,20 +270,26 @@ void DSM::Visibility::compress()
 
 Camera DSM::defaultCameraFromPointLight(PointLight pointLight)
 {
-    return {pointLight.position, aiVector3t<double>(0, 0, 0), 80, 1/1,
+    return {pointLight.position, aiVector3t<double>(0, 0, 5), 80, 1/1,
                 1, 5000};
 }
 
 DSM::Visibility DSM::visibilityFromPoint(aiVector3t<double> pos) const {
-    auto pointOnImagePlan = camera.center + (pos - camera.center).Normalize() * camera.nearClipPlane;
-    auto vecFromOrigin = pointOnImagePlan - camera.originPixel;
+    //auto pointOnImagePlan = camera.center + (pos - camera.center).Normalize() * camera.nearClipPlane;
+    //auto vecFromOrigin = pointOnImagePlan - camera.originPixel;
 
-    auto vecOnRight = vecFromOrigin * camera.right;
-    int w = (int)(vecOnRight/camera.pixelWidth);
+    auto rayToPoint = (pos - camera.center).Normalize();
+    auto rayOnRight = rayToPoint * camera.right;
+    auto rayOnForward = rayToPoint * camera.forward;
+    auto rightDepl = (camera.nearClipPlane * rayOnRight) / rayOnForward;
+    auto rayOnUp = rayToPoint * camera.up;
+    auto upDepl = (camera.nearClipPlane * rayOnUp) / rayOnForward;
 
-    auto vecOnUp = vecFromOrigin * camera.up;
-    int h = -(int)(vecOnUp/camera.pixelHeight);
+    //auto vecOnRight = vecFromOrigin * camera.right;
+    int w = width/2 + (int)(rightDepl/camera.pixelWidth);//(int)(vecOnRight/camera.pixelWidth); //
 
+    //auto vecOnUp = vecFromOrigin * camera.up;
+    int h = height/2 - (int)(upDepl/camera.pixelHeight);// -(int)(vecOnUp/camera.pixelHeight); //
 
     if (0 > h || height <= h || 0 > w || width <= w)
         return clearVisibility;

@@ -20,7 +20,7 @@ private:
     PointLight light;
     double pixelSize;
     double ratio;
-    DSM dsm = DSM(600,600);
+    DSM dsm = DSM(512,512);
 
 public:
     Renderer(const aiScene *scene) {

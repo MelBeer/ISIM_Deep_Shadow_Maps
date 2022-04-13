@@ -83,7 +83,7 @@ public:
     Visibility visibilityAt(unsigned int h, unsigned int w) const;
     Visibility visibilityFromPoint(aiVector3t<double> pos) const;
 
-    private:
+    public:
         std::vector<Visibility> visibilities;
     
 private:
